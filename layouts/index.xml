@@ -1,0 +1,86 @@
+{{- $pctx := . -}}
+{{- if .IsHome -}}{{ $pctx = .Site }}{{- end -}}
+{{- $pages := slice -}}
+{{- if or $.IsHome $.IsSection -}}
+{{- $pages = $pctx.RegularPages -}}
+{{- else -}}
+{{- $pages = $pctx.Pages -}}
+{{- end -}}
+{{- $pages := where $pages "Params.hidden" "!=" true -}}
+{{- $limit := .Site.Config.Services.RSS.Limit -}}
+{{- if ge $limit 1 -}}
+{{- $pages = $pages | first $limit -}}
+{{- end -}}
+
+<rss version="2.0"
+     xmlns:content="http://purl.org/rss/1.0/modules/content/"
+     xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:atom="http://www.w3.org/2005/Atom"
+     xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+     xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+     xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+     xmlns:media="http://search.yahoo.com/mrss/">
+<channel>
+    <title>{{ .Site.Title}}</title>
+    <link>{{.Site.BaseURL}}</link>
+    <description>{{.Site.Params.podcast.description}}</description>
+    <language>ru</language>
+    <copyright>Copyright &#xA9; {{.Site.Title}}</copyright>
+    <!-- <atom:link href="{{ .Page.Permalink }}" rel="self" type="application/rss+xml"/> -->
+    <lastBuildDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</lastBuildDate>
+    <sy:updatePeriod>hourly</sy:updatePeriod>
+    <sy:updateFrequency>1</sy:updateFrequency>
+    <managingEditor>{{.Site.Params.author.email}} ({{ .Site.Params.author.name }})</managingEditor>
+    
+    <itunes:type>episodic</itunes:type>
+    <itunes:author>{{.Site.Params.author.name}}</itunes:author>
+    <itunes:owner>
+        <itunes:name>{{.Site.Params.author.name}}</itunes:name>
+        <itunes:email>{{.Site.Params.author.email}}</itunes:email>
+    </itunes:owner>
+    <itunes:block>no</itunes:block>
+    <itunes:explicit>no</itunes:explicit>
+    {{ $image := resources.GetMatch .Site.Params.sidebar.avatar.src }}
+    <itunes:image href="{{ $image.Permalink }}"/>
+    <itunes:summary>{{.Site.Params.podcast.description}}</itunes:summary>
+
+    <itunes:category text="Education">
+        <itunes:category text="Self-Improvement"/>
+    </itunes:category>
+
+    <itunes:category text="Society &amp; Culture"/>
+
+    <itunes:category text="Technology"/>
+
+
+    {{ range $pages }}
+        {{ if isset .Params "mp3" }}
+
+        <item>
+            <link>{{.Permalink}}</link>
+            <title>Эпизод {{ .Params.number }}. {{ .Params.title }}</title>
+            <pubDate>{{ .PublishDate.Format "Mon, 02 Jan 2006 15:04:00 -0700" }}</pubDate>
+            <description>{{ .Params.title }}</description>
+            <enclosure url='{{.Site.Params.podcast.download_url}}/{{ .Params.mp3.filename }}'
+                       length='{{ .Params.mp3.lenght }}' type="audio/mp3"/>
+
+            <itunes:author>{{.Site.Params.author.name}}</itunes:author>
+            <itunes:episode>{{ .Params.number }}</itunes:episode>
+            <itunes:title>Эпизод {{ .Params.number }}. {{ .Params.title }}</itunes:title>
+            <itunes:summary>{{ .Content | plainify }}</itunes:summary>
+            <itunes:subtitle>{{ .Params.description | plainify }}</itunes:subtitle>
+            <content:encoded>{{ `<![CDATA[` | safeHTML }}{{ .Content }}{{ `]]>` | safeHTML }}</content:encoded>
+            <itunes:duration>{{ .Params.mp3.duration }}</itunes:duration>
+            <itunes:keywords>{{ delimit .Params.tags ", " }}</itunes:keywords>
+            <itunes:episodeType>full</itunes:episodeType>
+
+        </item>
+
+        {{ end }}
+
+    {{ end }}
+
+    
+</channel>
+</rss>

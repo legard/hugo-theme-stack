@@ -1,0 +1,25 @@
+{{- $context := .Context -}}
+<section class="widget">
+    <div class="widget-icon">
+        {{ partial "helper/icon" "radio" }}
+    </div>
+    <h2 class="widget-title section-title">{{ T "widget.subscription.title" }}</h2>
+
+
+    <ol class="subscription-items">
+        {{ with site.Params.subscription }}
+            {{ range . }}
+                <li>
+                    <a href='{{ .link }}' target="_blank">
+                        {{ $icon := .icon }}
+                        {{ with $icon }}
+                            {{ partial "helper/icon" . }}
+                        {{ end }}
+                        <span>{{ .title }}</span>
+                    </a>
+                </li>
+            {{ end }}
+        {{ end }}
+    </ol>
+
+</section>

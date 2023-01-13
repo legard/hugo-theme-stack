@@ -12,7 +12,12 @@
     <div class="article-title-wrapper">
         <h2 class="article-title">
             <a href="{{ .RelPermalink }}">
-                {{- .Title -}}
+                {{ if isset .Params "mp3" }}
+                Эпизод {{ .Params.number }}.&nbsp;{{- .Title -}}
+                {{ else }}
+                    {{- .Title -}}                
+                {{ end }}
+
             </a>
         </h2>
     

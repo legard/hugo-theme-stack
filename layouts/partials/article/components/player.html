@@ -1,0 +1,30 @@
+<section class="article-player"></section>
+
+{{ $shikwasa := resources.Get "js/shikwasa.es.js" }}
+{{ $shikwasa_js := $shikwasa | minify | resources.Fingerprint "sha256" }}
+{{ $cover := resources.GetMatch .Site.Params.sidebar.avatar.src }}
+
+<script type="module">
+    import { Player, Chapter} from '{{ $shikwasa_js.RelPermalink }}'
+
+    const audio = {
+        title: 'Эпизод {{ .Params.number }}.&nbsp;{{- .Title -}}',
+        artist: '{{ .Site.Title }}',
+        src: '{{.Site.Params.podcast.download_url}}/{{ .Params.mp3.filename }}',
+        cover: '{{ $cover.Permalink }}',
+    }
+    
+    const player = new Player({
+        container: document.querySelector('.article-player'),
+        audio,
+        themeColor: '#d26515',
+        theme: 'light',
+        preload: 'metadata',
+        fixed: {
+        type: 'auto',
+    },
+    speedOptions: [0.75, 1.25, 1.5, 1.75, 2],
+    download: true,
+
+    })
+    </script>
