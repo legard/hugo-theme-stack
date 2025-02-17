@@ -41,7 +41,8 @@
     </itunes:owner>
     <itunes:block>no</itunes:block>
     <itunes:explicit>no</itunes:explicit>
-    {{ $image := resources.GetMatch .Site.Params.sidebar.avatar.src }}
+    {{ $image := resources.GetMatch .Site.Params.podcast.image }}
+
     <itunes:image href="{{ $image.Permalink }}"/>
     <itunes:summary>{{.Site.Params.podcast.description}}</itunes:summary>
 
@@ -59,15 +60,15 @@
 
         <item>
             <link>{{.Permalink}}</link>
-            <title>Эпизод {{ .Params.number }}. {{ .Params.title }}</title>
+            <title>#{{ .Params.number }}. {{ .Params.title }}</title>
             <pubDate>{{ .PublishDate.Format "Mon, 02 Jan 2006 15:04:00 -0700" }}</pubDate>
             <description>{{ .Params.title }}</description>
             <enclosure url='{{.Site.Params.podcast.download_url}}/{{ .Params.mp3.filename }}'
-                       length='{{ .Params.mp3.lenght }}' type="audio/mp3"/>
+                       length='{{ .Params.mp3.length }}' type="audio/mp3"/>
 
             <itunes:author>{{.Site.Params.author.name}}</itunes:author>
             <itunes:episode>{{ .Params.number }}</itunes:episode>
-            <itunes:title>Эпизод {{ .Params.number }}. {{ .Params.title }}</itunes:title>
+            <itunes:title>#{{ .Params.number }}. {{ .Params.title }}</itunes:title>
             <itunes:summary>{{ .Content | plainify }}</itunes:summary>
             <itunes:subtitle>{{ .Params.description | plainify }}</itunes:subtitle>
             <content:encoded>{{ `<![CDATA[` | safeHTML }}{{ .Content }}{{ `]]>` | safeHTML }}</content:encoded>
